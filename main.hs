@@ -16,7 +16,7 @@ import           PlutusTx.Prelude      hiding (pure, (<$>))
 import qualified Prelude               as Haskell
 
 validateGuess :: Bool -> Bool -> ScriptContext -> Bool
-validateGuess actual guess _ = actual == guess
+validateGuess actual guess _ = traceIfFalse "wrong guess" $ actual == guess
 
 data LockParams = LockParams
     { 
@@ -41,7 +41,7 @@ instance Scripts.ValidatorTypes Game where
     type instance DatumType Game = Bool
 
 gameInstance :: Scripts.TypedValidator Game
-gameInstance = Scripts.mkTypedValidator @ 
+gameInstance = Scripts.mkTypedValidator @Game
     $$(PlutusTx.compile [|| validateGuess ||])
     $$(PlutusTx.compile [|| Scripts.wrapValidator @Bool @Bool ||])
 
